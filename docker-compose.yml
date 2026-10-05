@@ -1,0 +1,21 @@
+# Runs the API and the Streamlit UI as two containers from the same image.
+#   docker compose up -d     start both
+#   docker compose down      stop and remove both
+
+services:
+  api:
+    image: rban10/yolo-seg:latest
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  ui:
+    image: rban10/yolo-seg:latest
+    command: streamlit run streamlit_app.py --server.address=0.0.0.0 --server.port=8501
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://api:8000
+    depends_on:
+      - api
+    restart: unless-stopped
